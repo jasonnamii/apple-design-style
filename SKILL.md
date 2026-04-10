@@ -1,6 +1,12 @@
 ---
 name: apple-design-style
-description: "Apple Keynote 감성 미니멀 디자인 시스템. 블랙/화이트 기반 극단적 weight 대비. HTML·PDF·PPTX·옵시디언 산출물 생성. '애플 디자인 스타일' 명시 요청시에만 발동."
+description: |
+  Apple Keynote 감성 미니멀 디자인 시스템. 블랙/화이트 기반 극단적 weight 대비. HTML·PDF·PPTX·옵시디언 산출물 생성. '애플 디자인 스타일' 명시 요청시에만 발동.
+  P1: 애플디자인스타일, 애플스타일, 키노트스타일, 미니멀디자인, 블랙화이트, 벤토, bento.
+  P2: 적용해줘, 만들어줘, apply, create.
+  P3: Apple design, Keynote style, minimal design system.
+  P5: .html로, .pdf로, .pptx로, .md로.
+  NOT: 일반HTML디자인(→html-div-style), UI설계(→ui-action-designer).
 "@uses":
   - references/mode-html-scroll.md
   - references/mode-html-bento.md
