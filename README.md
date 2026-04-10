@@ -2,6 +2,12 @@
 
 **Apple Keynote-inspired minimalism: extreme contrast, precise typography, versatile output formats.**
 
+## Prerequisites
+
+- **Obsidian Vault** — required for `mode-obsidian` output (box styling, font/color constraints)
+- **Claude Cowork or Claude Code** environment
+- For HTML/PDF/PPTX output, Obsidian is not required
+
 ## Goal
 
 apple-design-style provides a design system rooted in black/white contrast, extreme font weight variation, generous whitespace, and strategic typography. It outputs to HTML, PDF, PPTX, or Obsidian markdown from a single specification.
