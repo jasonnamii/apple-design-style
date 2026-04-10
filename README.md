@@ -1,5 +1,7 @@
 # apple-design-style
 
+> 🇰🇷 [한국어 README](./README.ko.md)
+
 **Apple Keynote-inspired minimalism: extreme contrast, precise typography, versatile output formats.**
 
 ## Prerequisites
