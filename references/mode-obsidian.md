@@ -122,7 +122,7 @@
 ❼ 콜아웃 내 테이블 배경: 각 <td>에 불투명 background-color 명시
 
 검증: UP §C.QC 파이프라인이 수행. 서브에이전트는 규칙 준수에 집중, 자가검증 불필요.
-저장: DC write_file로 볼트 경로에 직접 작성. 옵시 MCP write_note/patch_note 사용 금지.
+저장: 볼트 경로에 직접 작성. 옵시 MCP write_note/patch_note 사용 금지.
 ```
 
 ## 체크리스트
