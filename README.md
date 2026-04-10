@@ -1,14 +1,35 @@
-# Apple Design Style
+# apple-design-style
 
-**Apple Keynote-inspired minimal design system.**
+**Apple Keynote-inspired minimalism: extreme contrast, precise typography, versatile output formats.**
 
-Black/white base, extreme font weight contrast, 5 scales. Outputs: HTML scroll, HTML bento grid, PDF, PPTX, or Obsidian. Only activates when explicitly requested.
+## Goal
 
-### Example Prompts
+apple-design-style provides a design system rooted in black/white contrast, extreme font weight variation, generous whitespace, and strategic typography. It outputs to HTML, PDF, PPTX, or Obsidian markdown from a single specification.
 
-```
-"Apply apple design style to this report" → select output mode→apply typography→render
-```
+## When & How to Use
+
+Deploy exclusively when explicitly requested. Ideally paired with deliverable-engine for content structure before visual application. Use for high-stakes presentations, investor decks, executive summaries, or documentation that needs to impress through clarity and minimalism.
+
+## Use Cases
+
+| Scenario | Prompt | What Happens |
+|---|---|---|
+| Investor pitch deck | `"Design Series A deck with apple design style. PPTX."` | Black/white base→5-scale weight contrast→minimal color accent→production-ready .pptx |
+| Executive summary | `"Reformat strategy doc with apple design style. PDF."` | Typographic hierarchy→negative space→single-color accent→print-ready PDF |
+| Obsidian documentation | `"Apply apple design style to documentation."` | Typography hierarchy in markdown→minimal callouts→whitespace→elegant vault |
+
+## Key Features
+
+- Black/white foundation with one accent color maximum
+- 5-scale font weight hierarchy for extreme visual contrast
+- Generous whitespace emphasizing what matters
+- Multi-format: Obsidian + HTML + PDF + PPTX from single design spec
+- Explicit activation only — never auto-triggers
+
+## Works With
+
+- **[deliverable-engine](https://github.com/jasonnamii/deliverable-engine)** — structures content; apple-design-style applies visual design
+- **[html-div-style](https://github.com/jasonnamii/html-div-style)** — alternative design system with more style variety
 
 ## Installation
 
@@ -26,7 +47,7 @@ Skills placed in `~/.claude/skills/` are automatically available in Claude Code 
 
 ## Part of Cowork Skills
 
-This is one of 25 custom skills. See the full catalog: [https://github.com/jasonnamii/cowork-skills](https://github.com/jasonnamii/cowork-skills)
+This is one of 25+ custom skills. See the full catalog: [github.com/jasonnamii/cowork-skills](https://github.com/jasonnamii/cowork-skills)
 
 ## License
 
