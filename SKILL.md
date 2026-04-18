@@ -216,5 +216,6 @@ html-div-style과 동일한 2층 구조. 이 스킬 = 2층(디자인 레이어).
 - **옵시디언 div 렌더링:** .md 출력 시 html-div-style의 obsidian-rules(빈줄 금지, HTML 태그만, 색상 명시 등)를 동일하게 적용. 해당 규칙의 상세는 html-div-style 스킬을 참조.
 - **모바일에서 XL 80px 강행:** 히어로 폰트를 고정 80px로 두면 모바일에서 가로 넘침·줄바꿈 대참사. clamp 최소값 48px로 축소 필수.
 - **벤토 그리드 고정열:** `grid-template-columns: 1fr 1fr 1fr 1fr` 같은 고정 4열은 모바일에서 깨짐. `repeat(auto-fit, minmax(280px, 1fr))` 또는 미디어쿼리 필수.
+- **명시적 span 리셋 누락 (벤토 최빈 함정):** `.col-3,.col-4{grid-column:span N}` 유틸만 리셋하고 `.hero{span 2}`·`.section-head{span 4}`·`.closing{span 4}`·`.elev{span 3}`·`.think{span 2}` 같은 **명명 컴포넌트의 span 선언**을 @media에서 리셋 안 하면, 자식 카드가 **암시적 그리드 트랙**을 생성해 모바일에서도 4열 유지. 시각 발현: "카드가 화면 밖으로 밀려 잘림". 규칙: base에 `grid-column:span` 값을 준 **모든 선택자**를 1024px(≤span 2)·640px(span 1)에서 전수 리셋. 실제 사례: KISAS_PLANNING_V2.html 2026-04-18 발견.
 - **viewport 메타 누락:** HTML 출력 시 `<meta name="viewport" content="width=device-width, initial-scale=1">` 없으면 모바일에서 데스크탑 뷰로 축소렌더링 → 글자 좁쌀. 필수 삽입.
 - **과도한 패딩 모바일 전파:** 데스크탑 80~120px 패딩을 모바일에서 그대로 쓰면 콘텐츠 영역이 휴대폰 화면의 20%만 남음. 미디어쿼리로 20~32px로 축소.
