@@ -7,9 +7,9 @@
 | 섹션 | `min-height: 100vh`, flex-center |
 | 제목 | XL `clamp(64px, 8vw, 80px)` wght 950, `letter-spacing: -3px` |
 | 서브제목 | L `clamp(36px, 5vw, 48px)` wght 700 |
-| 본문 | M `clamp(22px, 3vw, 28px)` wght 300, color `#ccc` |
-| 보조 | S `18px` wght 300, color `#888` |
-| 라벨 | XS `12px` wght 400, color `#666` |
+| 본문 | M `clamp(22px, 3vw, 28px)` wght 300, color `#d1d1d6` (ccc 대비 상향) |
+| 보조 | S `clamp(16px,1.6vw,18px)` wght 400, color `#b0b0b0` (캡션급 하한 16px) |
+| 라벨 | XS `13px` wght 500, color `#8e8e93` (666 대비 상향) |
 | 강조 | 동일 사이즈 + wght 600, color `#fff` |
 | 플로우 | S mono계열, color `#666`, span내 `#fff` |
 | 구분선 | `border-top: 1px solid #1a1a1a` |
@@ -22,3 +22,5 @@
 - [ ] HTML: Pretendard Variable CDN import 확인 (jsdelivr)
 - [ ] IntersectionObserver 애니메이션 동작 확인
 - [ ] clamp 반응형 사이즈 적용
+- [ ] XS 13px 하한, S 16px 하한 (가독성 확보)
+- [ ] 다크 배경 보조텍스트 `#b0b0b0` 이상 (`#888`·`#666` 금지)
