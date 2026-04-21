@@ -15,6 +15,8 @@
 | 모바일에서 4열 유지 | @media에서 일부 컴포넌트 span 리셋 누락 | base span 선언 전수 열거 후 @media 커버 확인 |
 | 다크카드 내용 비어 보임 | `min-height` 고정 + 콘텐츠 미주입 | DevTools → 자식 노드 존재 확인 |
 | 태블릿 2열에서 1열 일부 카드 튀어나옴 | @media 1024px에서 특정 span 리셋 빠짐 | 1024px 구간 선택자 전수 대조 |
+| **진블루/다크 박스 안 글자 안 읽힘** | inline `style="color:#424245"` + `.dark`/`.hot` 조합 → 역매핑 무력화 | `grep -n 'style="[^"]*color:' *.html` → 전수 제거 |
+| **다크 박스 캡션이 배경과 뭉개짐** | `--muted` 단일 변수 또는 다크 역매핑 CSS 누락 | `:root { --label-caption }` + `.dark { --label-caption:#d1d1d6 }` 존재 확인 |
 
 ---
 
@@ -55,6 +57,16 @@ body {
 .think        { grid-column: span 2; }
 .elev         { grid-column: span 3; }
 
+/* === 색상 3변수 (라이트 기본) === */
+:root {
+  --label-info:    #1d1d1f;
+  --label-caption: #424245;
+  --label-deco:    #86868b;
+}
+body { color: var(--label-info); }
+.caption, .case, .xs.info { color: var(--label-caption); }
+.deco, .date, .tag, .num  { color: var(--label-deco); }
+
 /* === 카드 === */
 .card {
   background: #fff;
@@ -63,7 +75,19 @@ body {
   min-width: 0;                /* 🔴 grid 자식 */
   overflow: hidden;            /* 내부 텍스트 이탈 방지 */
 }
-.card.dark { background: #002147; color: #fff; }
+.card.dark { background: #002147; color: var(--label-info); }
+
+/* === 🔴 다크 컨테이너 3변수 역매핑 === */
+.dark, .key, .hot, .now, .region.hot, .think.dark, .card.dark, [class*="-dark"] {
+  --label-info:    #fff;
+  --label-caption: #d1d1d6;    /* #424245·#6e6e73 다크배경 FAIL */
+  --label-deco:    #86868b;
+  color: var(--label-info);
+}
+.dark .caption, .dark .case, .hot .caption, .hot .case,
+.think.dark .case { color: var(--label-caption); }
+.dark .deco, .dark .date, .dark .tag, .dark .num,
+.hot .deco, .hot .date, .hot .num { color: var(--label-deco); }
 
 /* === @media 1024px === */
 @media (max-width: 1024px) {
@@ -139,3 +163,7 @@ body {
 - [ ] 360·390·480·640·768·1024px 실측 횡스크롤 0
 - [ ] `body { overflow-x: hidden }` 없음
 - [ ] 다크카드 내부 콘텐츠 실제 렌더 확인 (min-height만 있고 비지 않음)
+- [ ] CSS 변수 3분리 선언 (`--label-info`·`--label-caption`·`--label-deco`)
+- [ ] 다크 컨테이너(`.dark`·`.hot`·`.key`·`.now`·`.region.hot`·`.think.dark`) 전부 3변수 역매핑
+- [ ] 다크 배경 Tier 2 = `#d1d1d6` (`#424245`·`#6e6e73` 다크 0건)
+- [ ] inline `style="color:..."` 전수 0건 (`grep -n 'style="[^"]*color:' *.html`)

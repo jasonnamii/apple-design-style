@@ -33,12 +33,33 @@
 ### 미디어쿼리 템플릿
 
 ```css
-/* 🔴 base — 한글 줄바꿈 + 수축 허용 필수 */
-body { word-break: keep-all; overflow-wrap: break-word; line-break: strict; }
+/* 🔴 base — 한글 줄바꿈 + 수축 허용 + 색상 3변수 */
+:root {
+  --label-info:    #1d1d1f;  /* Tier 1 정보성 */
+  --label-caption: #424245;  /* Tier 2 캡션 */
+  --label-deco:    #86868b;  /* Tier 3 장식 */
+}
+body { word-break: keep-all; overflow-wrap: break-word; line-break: strict; color: var(--label-info); }
 .grid > * { min-width: 0; }
 .card { min-width: 0; overflow: hidden; }
 img, svg, video, iframe { max-width: 100%; height: auto; display: block; }
 table { table-layout: fixed; width: 100%; }
+
+.caption, .case, .xs.info   { color: var(--label-caption); }
+.deco, .date, .tag, .num     { color: var(--label-deco); }
+
+/* 🔴 다크 컨테이너 자동 역매핑 — inline style="color:..." 전수 제거 필수 */
+.dark, .key, .hot, .now, .region.hot, .think.dark,
+.card.dark, [class*="-dark"] {
+  --label-info:    #fff;
+  --label-caption: #d1d1d6;   /* #424245·#6e6e73 다크배경 금지 */
+  --label-deco:    #86868b;
+  color: var(--label-info);
+}
+.dark .caption, .dark .case, .hot .caption, .hot .case,
+.think.dark .case { color: var(--label-caption); }
+.dark .deco, .dark .date, .dark .tag, .dark .num,
+.hot .deco, .hot .date, .hot .num { color: var(--label-deco); }
 
 @media (max-width: 1024px) {
   .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -70,6 +91,10 @@ table { table-layout: fixed; width: 100%; }
 - [ ] 360·390·480·640·768px 실측 횡스크롤 0
 - [ ] XS 13px 하한
 - [ ] 색상 3단: 정보성 라벨 `#1d1d1f` · 캡션 `#424245` · 장식(일련번호·날짜·tag) `#86868b`
+- [ ] CSS 변수 3분리 선언 (`--label-info`/`--label-caption`/`--label-deco`). `--muted` 단일 변수 없음
+- [ ] 다크 컨테이너 역매핑 CSS 선언 (`.dark`·`.hot`·`.key`·`.now`·`.region.hot`·`.think.dark`)
+- [ ] 다크 배경 텍스트 4색 한정 (`#fff`·`#d1d1d6`·`#86868b`·`#3a3a3c`). `#424245`·`#6e6e73` 다크 없음
+- [ ] inline `style="color:..."` 전수 0건 (`grep -n 'style="[^"]*color:' *.html` = 0)
 - [ ] 라벨·섹션헤더 weight 700 (작은글자+light+muted 3중 약화 방지)
 - [ ] `body { word-break: keep-all; overflow-wrap: break-word }` 선언
 - [ ] `.grid > * { min-width: 0 }` 선언 (한글 세로낙하·카드이탈 방지)

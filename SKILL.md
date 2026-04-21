@@ -1,12 +1,12 @@
 ---
-name: apple-design-style
+name: apple-box-design
 description: |
-  Apple Keynote 감성 미니멀 디자인 시스템. 블랙/화이트 기반 극단적 weight 대비. HTML·PDF·PPTX·옵시디언 산출물 생성. 모바일 반응형 기본 포함(모바일 우선, clamp 폰트, 3단계 브레이크포인트). '애플 디자인 스타일' 명시 요청시에만 발동.
-  P1: 애플디자인스타일, 애플스타일, 키노트스타일, 미니멀디자인, 블랙화이트, 벤토, bento, 반응형애플, 모바일애플.
+  Apple Keynote 감성 박스·벤토 디자인. 블랙/화이트 극단 weight + 색상 3단(정보·캡션·장식) + 다크컨테이너 자동 역매핑. HTML·PDF·PPTX·옵시디언.
+  P1: 애플스킬, 애플디자인, 애플박스, 애플박스디자인, 애플디자인스타일, 애플스타일, 키노트스타일, 미니멀디자인, 블랙화이트, 벤토, bento, 반응형애플, 모바일애플, 애플벤토.
   P2: 적용해줘, 만들어줘, apply, create.
-  P3: Apple design, Keynote style, minimal design system, responsive, mobile-first.
+  P3: apple skill, apple design, apple box, Apple Keynote, bento grid, dark container remap.
   P5: .html로, .pdf로, .pptx로, .md로.
-  NOT: 일반HTML디자인(→html-div-style), UI설계(→ui-action-designer).
+  NOT: 일반HTML(→html-div-style), UI설계(→ui-action-designer).
 "@uses":
   - references/mode-html-scroll.md
   - references/mode-html-bento.md
@@ -23,9 +23,11 @@ P5: .html로, .pdf로, .pptx로, .md로.
 NOT: 일반 옵시디언 문서(→마크다운 기본), mermaid(→직접수행)
 -->
 
-# Apple Design Style
+# Apple Box Design (애플 박스 디자인 / 애플 스킬)
 
-Apple Keynote 감성의 미니멀 디자인 언어. 블랙/화이트 + 5단계 폰트 스케일 + 극단적 weight 대비가 핵심. 콘텐츠 구조(BP, 보고서, 매뉴얼 등)는 자유 — 이 디자인 언어를 입히는 것이 목적.
+Apple Keynote 감성의 미니멀 박스 디자인 언어. 블랙/화이트 + 5단계 폰트 스케일 + 극단적 weight 대비 + 벤토 그리드 박스 + 색상 3단 역매핑이 핵심. 콘텐츠 구조(BP, 보고서, 매뉴얼 등)는 자유 — 이 디자인 언어를 입히는 것이 목적.
+
+**호출명:** 애플스킬 · 애플디자인 · 애플박스 · 애플박스디자인 · 애플디자인스타일 · 애플스타일 · 애플벤토 · 반응형애플 · 모바일애플 · 키노트스타일 · 미니멀디자인 · 블랙화이트 · 벤토 / bento. 하나라도 걸리면 발동.
 
 ---
 
@@ -173,40 +175,90 @@ Think [핵심단어].
 
 ---
 
-## 색상 팔레트
+## 색상 시스템 (3단 + 다크 역매핑 + inline 금지)
 
-| 역할 | 스크롤HTML | 벤토HTML | PDF | Obsidian(.md) |
+작은 글자의 "흐림"은 색상 혼용이 원인. **역할별 3단 고정 + CSS 변수 3분리 + 다크 컨테이너 자동 역매핑** 3중 방어.
+
+### 1) 역할 3단 (필수 판정)
+
+| 단계 | 라이트 HEX | 다크 HEX | weight | 용도 | 금지 용도 |
+|------|-----------|---------|--------|------|----------|
+| **Tier 1 정보성** | `#1d1d1f` | `#fff` | 500-700 | 정보성 라벨(섹션 라벨·표 행 라벨·카드 제목·항목명) | 장식·일련번호 |
+| **Tier 2 캡션** | `#424245` | `#d1d1d6` | 400-500 | 캡션·사례·설명문·"타 산업 유사사례" 등 본문급 보조 | 본문 대체·다크배경 원색 사용 |
+| **Tier 3 장식** | `#86868b` | `#86868b` | 400-500 | 일련번호(①②③④/01·02)·날짜·tag·장식 점 "·" | 정보성 라벨 |
+
+**판정 기준:** "이 글자를 못 읽으면 정보 손실이 있는가?" Yes → Tier 1/2 / No → Tier 3.
+
+**WCAG AA 본문 4.5:1:** `#424245` on `#f5f5f7` = 9.7:1 ✅ / `#86868b` on `#f5f5f7` = 3.5:1 ❌ (장식 한정).
+
+### 2) CSS 변수 3분리 (필수 — `--muted` 단일 변수 FAIL)
+
+```css
+:root {
+  /* 라이트 배경 기본값 */
+  --label-info:    #1d1d1f;  /* Tier 1 */
+  --label-caption: #424245;  /* Tier 2 */
+  --label-deco:    #86868b;  /* Tier 3 */
+  /* 액센트 (선택) */
+  --accent-dark:   #002147;  /* Oxford Blue */
+}
+```
+
+**왜 3분리:** `--muted` 하나에 1·2·3단을 몰아넣으면 다크 컨테이너 역매핑이 한 변수에 걸려 깨진다. 예: 다크 배경에서 `--muted:#fff`로 덮으면 장식까지 흰색이 되어 위계 붕괴. **변수별 독립 역매핑 필수.**
+
+### 3) 다크 컨테이너 자동 역매핑 (치명 방어 — `#424245` on dark = FAIL)
+
+**다크 컨테이너 식별자:** `.dark` · `.key` · `.hot` · `.now` · `.elev` · `.region.hot` · `.think.dark` · `[class*="dark"]` · Oxford Blue 배경(`#002147`) 클래스.
+
+```css
+/* 다크 컨테이너 진입 시 3 변수 전부 역매핑 */
+.dark, .key, .hot, .now, .region.hot, .think.dark,
+[style*="background:#002147"], [style*="background:#000"],
+[style*="background:#1d1d1f"], [style*="background:#2d2d2d"] {
+  --label-info:    #fff;     /* Tier 1 역매핑 */
+  --label-caption: #d1d1d6;  /* Tier 2 역매핑 — #424245·#6e6e73 다크배경 금지 */
+  --label-deco:    #86868b;  /* Tier 3 유지 (대비 충분) */
+  color: var(--label-info);
+}
+
+/* 자식 요소는 variable 경유만 */
+.dark .caption, .dark .case,        { color: var(--label-caption); }
+.dark .deco, .dark .date, .dark .tag{ color: var(--label-deco); }
+```
+
+**다크 배경 허용 4색만:** `#fff` · `#d1d1d6` · `#86868b` · `#3a3a3c`. **`#424245`·`#6e6e73`·`#666`·`#888` 다크배경 전부 FAIL** (대비 ≤3:1).
+
+**WCAG AA 다크 검증:** `#424245` on `#002147` = 2.4:1 ❌ / `#d1d1d6` on `#002147` = 11.8:1 ✅.
+
+### 4) inline `style="color:..."` 금지 (치명)
+
+**규칙:** 색상은 **변수·클래스 경유만**. inline `style="color:#xxx"` 선언 = FAIL.
+
+**왜:** inline style은 CSS specificity 1000으로 다크 컨테이너 역매핑(0,0,1,0~0,0,2,0)을 **무조건 무효화**. 실제 KISAS_PLANNING_V2.html에서 `<div class="xs" style="color:#424245">`가 `.think.dark` 내부에서 진블루 위에 그대로 출력되어 가독성 붕괴.
+
+```html
+<!-- ❌ FAIL: inline이 역매핑 무력화 -->
+<div class="case" style="color:#424245">타 산업 유사사례</div>
+
+<!-- ✅ PASS: 클래스 + 변수 경유 -->
+<div class="case">타 산업 유사사례</div>
+<style>.case { color: var(--label-caption); }</style>
+```
+
+**예외:** 디자인 시스템 외 1회성 데모·프린트 전용 CSS만 허용. 프로덕션 문서 = 금지.
+
+### 5) 출력 모드별 매핑 (PDF·PPTX·Obsidian)
+
+| 역할 | 스크롤HTML | 벤토HTML | PDF (reportlab) | Obsidian(.md) |
 |------|-----------|---------|-----|---|
-| 배경 | `#000` | `#f5f5f7` | `(0,0,0)` | 투명(마크다운 기본) |
-| 박스(화이트) | — | — | — | `#fff` + border `#e0e0e0` |
-| 박스(그레이) | — | — | — | `#f5f5f7` + border `#e0e0e0` |
-| 박스(다크) | — | — | — | `#2d2d2d` + text `#fff` |
-| 제목 | `#fff` | `#1d1d1f` | `(1,1,1)` | `#1d1d1f` (박스 바깥) |
-| 본문 | `#ccc` | `#1d1d1f` | `(0.5,0.5,0.5)` | `#1d1d1f` (박스 내) |
-| 강조 | `#fff` wght600 | `#1d1d1f` wght700 | `(1,1,1)` Bold | `#fff` (다크박스) / `#1d1d1f` (밝은박스) |
-| 장식메타(일련번호·날짜·tag) | `#888` | `#86868b` | `(0.52,0.52,0.54)` | `#86868b` |
-| 캡션·사례·설명 (정보성) | `#b0b0b0` | **`#424245`** (미드블랙) | `(0.26,0.26,0.27)` | `#424245` |
-| 정보성 라벨·표 행 라벨 | `#e5e5ea` | **`#1d1d1f`** (본문급 딥블랙) | `(0.11,0.11,0.12)` | `#1d1d1f` |
-| 플로우 | `#666` | `#6e6e73` | `(0.43,0.43,0.45)` | `#6e6e73` |
-| 구분 | `#1a1a1a` | `#e5e5ea` | — | `#e0e0e0` (박스 테두리) |
-
-### 색상 역할 3단 분리 (필수)
-
-작은 글자의 "흐림"은 색상 혼용이 원인. 아래 3단으로 **역할별 색상 고정**. 혼용 = FAIL.
-
-| 단계 | HEX | weight | 용도 | 금지 용도 |
-|------|-----|--------|------|----------|
-| **Tier 1 정보성** | `#1d1d1f` | 500-700 | 정보성 라벨(섹션 라벨, 표 행 라벨, 카드 제목), 항목명 | 장식, 일련번호 |
-| **Tier 2 캡션** | `#424245` | 400-500 | 캡션, 사례, 설명문, "타 산업 유사사례" 같은 본문급 보조 | 본문 대체 |
-| **Tier 3 장식** | `#86868b` | 400-500 | 일련번호(①②③④ / 01·02), 날짜, tag, 장식 점 "·" | 정보성 라벨 |
-
-**판정 기준:** "이 글자를 못 읽으면 정보 손실이 있는가?"
-- Yes → Tier 1 또는 2 (`#1d1d1f` / `#424245`)
-- No (장식·반복·메타만) → Tier 3 (`#86868b`)
-
-**다크 배경 역매핑:** Tier 1 → `#fff`, Tier 2 → `#d1d1d6`, Tier 3 → `#86868b` 유지. `#666`·`#888` 다크배경 금지(대비 미달).
-
-**WCAG AA 본문 4.5:1:** `#424245` on `#f5f5f7` = 9.7:1 ✅ / `#86868b` on `#f5f5f7` = 3.5:1 ❌ (장식만 허용).
+| 배경 | `#000` | `#f5f5f7` | `(0,0,0)` | 마크다운 기본 |
+| 박스 테두리 | — | `#e5e5ea` | — | `#e0e0e0` |
+| Tier 1 정보성 | `#fff` | `#1d1d1f` | `(0.11,0.11,0.12)` | `#1d1d1f` |
+| Tier 2 캡션 | `#d1d1d6` | `#424245` | `(0.26,0.26,0.27)` | `#424245` |
+| Tier 3 장식 | `#86868b` | `#86868b` | `(0.52,0.52,0.54)` | `#86868b` |
+| 강조 | `#fff` wght600 | `#1d1d1f` wght700 | `(1,1,1)` Bold | wght700 |
+| 다크박스 배경 | — | `#1d1d1f`·`#002147` | — | `#2d2d2d`·`#002147` |
+| 플로우(mono) | `#666` | `#6e6e73` | `(0.43,0.43,0.45)` | `#6e6e73` |
 
 ### 액센트 옵션 (형 명시 요청 시만)
 
@@ -254,8 +306,11 @@ html-div-style과 동일한 2층 구조. 이 스킬 = 2층(디자인 레이어).
 ## 체크리스트 (공통)
 
 - [ ] 폰트 스케일 5단계(XL/L/M/S/XS) 준수, XS 13px 하한
-- [ ] 색상 3단 분리: 정보성 라벨=`#1d1d1f` · 캡션=`#424245` · 장식=`#86868b`
-- [ ] inline `color:#86868b` 박힌 정보성 텍스트 없음 (표 행 라벨·사례 라벨 등 전수 grep)
+- [ ] 색상 3단 분리: 정보성=`#1d1d1f` · 캡션=`#424245` · 장식=`#86868b`
+- [ ] CSS 변수 3분리 (`--label-info` · `--label-caption` · `--label-deco`), `--muted` 단일 변수 없음
+- [ ] 다크 컨테이너(`.dark`·`.key`·`.hot`·`.now`·`.region.hot`·`.think.dark`·Oxford Blue) 내부 자동 역매핑 CSS 존재
+- [ ] 다크 배경 텍스트는 4색만 (`#fff`·`#d1d1d6`·`#86868b`·`#3a3a3c`). `#424245`·`#6e6e73` 다크배경 없음
+- [ ] inline `style="color:#xxx"` 전수 0건 — 색상은 변수·클래스 경유만 (`grep -n 'style="[^"]*color:' *.html` = 0)
 - [ ] 컬러 사용 없음 (블랙/화이트/그레이만)
 - [ ] 제목 wght 950 (Black), 본문 wght 300 (Light) 대비
 - [ ] 섹션당 텍스트 4줄 이내
@@ -284,4 +339,7 @@ html-div-style과 동일한 2층 구조. 이 스킬 = 2층(디자인 레이어).
 - **명시적 span 리셋 누락 (벤토 최빈 함정):** `.col-3,.col-4{grid-column:span N}` 유틸만 리셋하고 `.hero{span 2}`·`.section-head{span 4}`·`.closing{span 4}`·`.elev{span 3}`·`.think{span 2}` 같은 **명명 컴포넌트의 span 선언**을 @media에서 리셋 안 하면, 자식 카드가 **암시적 그리드 트랙**을 생성해 모바일에서도 4열 유지. 시각 발현: "카드가 화면 밖으로 밀려 잘림". 규칙: base에 `grid-column:span` 값을 준 **모든 선택자**를 1024px(≤span 2)·640px(span 1)에서 전수 리셋. 실제 사례: KISAS_PLANNING_V2.html 2026-04-18 발견.
 - **viewport 메타 누락:** HTML 출력 시 `<meta name="viewport" content="width=device-width, initial-scale=1">` 없으면 모바일에서 데스크탑 뷰로 축소렌더링 → 글자 좁쌀. 필수 삽입.
 - **과도한 패딩 모바일 전파:** 데스크탑 80~120px 패딩을 모바일에서 그대로 쓰면 콘텐츠 영역이 휴대폰 화면의 20%만 남음. 미디어쿼리로 20~32px로 축소.
-- **XS 12px + muted 색상 3중 약화:** `font-size:12px` + `font-weight:300~400` + `color:#86868b`를 캡션·설명·사례에 함께 쓰면 읽기 불가 수준으로 흐림. 실제 사례: KISAS_PLANNING_V2.html 2026-04-21 보고. 규칙: XS 13px 하한 · weight 500 이상 · 캡션은 `#6e6e73` (sub). 애플 원본은 이 3중 약화를 "장식 메타(날짜·번호)"에만 국한.
+- **XS 12px + muted 색상 3중 약화:** `font-size:12px` + `font-weight:300~400` + `color:#86868b`를 캡션·설명·사례에 함께 쓰면 읽기 불가 수준으로 흐림. 실제 사례: KISAS_PLANNING_V2.html 2026-04-21 보고. 규칙: XS 13px 하한 · weight 500 이상 · 캡션은 `#424245`(Tier 2). 애플 원본은 이 3중 약화를 "장식 메타(날짜·번호)"에만 국한.
+- **진블루 위 `#424245`·`#6e6e73` (치명):** Oxford Blue `#002147` 위에 Tier 2 라이트값 `#424245` 그대로 쓰면 대비 2.4:1 — WCAG AA FAIL. 증상: "진블루 박스 안에 뭐가 써있긴 한데 안 읽힘". 규칙: 다크 컨테이너(`.dark`·`.hot`·`.key`·`.now`·Oxford Blue) 내부는 **Tier 2 자동 역매핑 `#d1d1d6`**. 3 CSS 변수 분리 필수(하나로 묶으면 장식까지 흰색 되어 위계 붕괴).
+- **inline `style="color:..."` 선언 (치명):** inline specificity 1000이 다크 컨테이너 역매핑(0,0,1,0~0,0,2,0)을 **무조건 무력화**. `<div class="xs" style="color:#424245">`를 `.think.dark` 자식으로 넣으면 역매핑 CSS 무시되고 진블루 위 진한회색 그대로 출력. 규칙: **inline style 색상 선언 0건**. 색상은 `var(--label-*)` 경유만. 실제 사례: KISAS_PLANNING_V2.html 2026-04-21 라인 488.
+- **`--muted` 단일 변수 설계 (설계 실패):** Tier 1/2/3를 한 변수에 몰면 다크 역매핑이 한 변수에만 걸려 위계 3단이 2단(또는 1단)으로 붕괴. 예: `--muted:#fff`로 다크 역매핑 → 정보성·캡션·장식 전부 흰색 = 위계 사라짐. 규칙: `--label-info`·`--label-caption`·`--label-deco` 3개로 분리해 각각 독립 역매핑.
