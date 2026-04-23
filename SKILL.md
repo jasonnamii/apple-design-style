@@ -111,9 +111,9 @@ Apple 스타일의 극단적 weight·여백은 모바일에서 깨지기 쉽다.
 
 ---
 
-## 레이아웃 붕괴 7대 원인 (HTML 전용 · 필수 체크)
+## 레이아웃 붕괴 11대 원인 (HTML 전용 · 필수 체크)
 
-벤토·그리드 설계 후 **제출 전 반드시 7대 전수 점검**. 하나라도 걸리면 모바일/태블릿에서 붕괴.
+벤토·그리드 설계 후 **제출 전 반드시 11대 전수 점검**. 하나라도 걸리면 모바일/태블릿에서 붕괴.
 
 | # | 원인 | 증상 | 진단 | 처방 |
 |---|------|------|------|------|
@@ -125,6 +125,10 @@ Apple 스타일의 극단적 weight·여백은 모바일에서 깨지기 쉽다.
 | 5 | **`white-space: nowrap` + 긴 텍스트** | `.mono`·태그·뱃지에 nowrap 박힘 | 단일 라인 강제 → 횡스크롤 | 장식용 외 nowrap 금지. 꼭 필요 시 `overflow: hidden; text-overflow: ellipsis; max-width:100%` 동반 |
 | 6 | **이미지·테이블·iframe max-width 누락** | 원본 사이즈 고정 | 모바일에서 부모 폭 돌파 | `img,svg,video,iframe{max-width:100%; height:auto}` / `table{table-layout:fixed; width:100%}` |
 | 7 | **패딩+폰트 고정px 누적** | card padding 44px + 폰트 28px + gap 24px | 360px 뷰포트에서 콘텐츠 영역 −값 | 모바일 패딩 20~24px로 축소, 폰트 clamp 강제 |
+| 8 | **`repeat(N, 1fr)` grid item 오버플로우 (치명)** | grid item 기본 `min-width:auto`라 콘텐츠가 칸 폭을 밀어냄 | `+22.8%` 같은 긴 텍스트가 박스 밖으로 삐져나옴 | **`repeat(N, minmax(0, 1fr))` 필수.** `.box { min-width:0; overflow:hidden }` 동반. 실제 사례: KISAS_Play_Manifesto.html 2026-04-23 s13. |
+| 9 | **인라인 `style="font-size:clamp(...)"` (치명)** | inline specificity 1000이 @media clamp 오버라이드 무력화 | 모바일 폰트 축소 미적용·글자밀림 | **인라인 font-size:clamp 0건.** 전부 클래스 경유. 실제 사례: KISAS_Play_Manifesto.html s17 closing-final. |
+| 10 | **`<br>` 강제 줄바꿈 (히어로·헤드라인)** | 폭 바뀔 때 깨지는 위치에서 강제 개행 | 모바일에서 2자 + 5자 극단 줄바꿈 | 자연 wrap + `word-break:keep-all` 의존. 의도적 2줄은 **최단 뷰포트에서도 1줄 보장** 조건에서만 허용 |
+| 11 | **clamp 하한 모바일 뷰포트 미역산** | `clamp(26px, 5.5vw, 84px)` = 375px에서 20.6px | 히어로가 본문 크기로 왜소해짐 | **히어로 하한 ≥40px·섹션 타이틀 ≥26px.** vw 계산 = `하한값 / (vw%) × 100`로 375px 실측 검증 |
 
 ### 제출 전 5 체크포인트 (실측)
 
@@ -132,7 +136,15 @@ Apple 스타일의 극단적 weight·여백은 모바일에서 깨지기 쉽다.
 360px · 390px · 480px · 640px · 768px · 1024px
 ```
 
-각 폭에서 `document.scrollWidth === window.innerWidth` 확인. 하나라도 `>` → 원인 7개 중 해당 항목 역추적.
+각 폭에서 `document.scrollWidth === window.innerWidth` 확인. 하나라도 `>` → 원인 11개 중 해당 항목 역추적.
+
+### 자동 QC (정적 grep 게이트)
+
+```bash
+bash mnt/.claude/skills/design-skill/scripts/qc-mobile.sh output.html
+```
+
+viewport·repeat(N,1fr)·한글 word-break·인라인 clamp·`<br>`·히어로 clamp 하한 6종 검출. design-skill 스포크에 위치(중복 생성 금지).
 
 ### base span 선언 전수 열거 방법
 
@@ -321,12 +333,17 @@ html-div-style과 동일한 2층 구조. 이 스킬 = 2층(디자인 레이어).
 - [ ] [HTML] 폰트 clamp 반응형 적용 (고정 px 금지)
 - [ ] [HTML] 모바일(≤640px)에서 1열 붕괴·횡스크롤 없음
 - [ ] [HTML] 터치 타겟 ≥44px
-- [ ] [HTML] 레이아웃 7대 원인 전수 점검 (암시적트랙·특이도·min-width:auto·word-break·nowrap·max-width·패딩누적)
+- [ ] [HTML] 레이아웃 11대 원인 전수 점검 (암시적트랙·특이도·min-width:auto·word-break·nowrap·max-width·패딩누적·repeat(N,1fr)·인라인clamp·`<br>`·clamp하한)
 - [ ] [HTML] 5 폭(360·390·480·640·768·1024) 횡스크롤 실측 0
 - [ ] [HTML] `img,svg,video,iframe{max-width:100%}` 선언
 - [ ] [HTML] **한글 `word-break: keep-all; overflow-wrap: break-word`** (break-word·anywhere·break-all 단독 금지)
 - [ ] [HTML] flex·grid 자식 `min-width: 0` (콘텐츠 수축 허용)
+- [ ] [HTML] **`repeat(N, minmax(0, 1fr))` 강제** — `repeat(N, 1fr)` 단독 금지 (grep `repeat\([0-9]+, *1fr\)` = 0)
+- [ ] [HTML] **인라인 `style="font-size:clamp(...)"` 0건** (grep `style="[^"]*font-size:[^"]*clamp` = 0)
+- [ ] [HTML] **히어로·헤드라인 `<br>` 강제 줄바꿈 0건** (자연 wrap으로)
+- [ ] [HTML] **히어로 clamp 하한 ≥40px, 섹션 타이틀 ≥26px** (375px 뷰포트 실측)
 - [ ] [HTML] body·html `overflow-x: hidden` 금지 (원인 은폐. 실제 수정 필요)
+- [ ] [HTML] `bash qc-mobile.sh output.html` 통과
 
 ---
 
@@ -343,3 +360,8 @@ html-div-style과 동일한 2층 구조. 이 스킬 = 2층(디자인 레이어).
 - **진블루 위 `#424245`·`#6e6e73` (치명):** Oxford Blue `#002147` 위에 Tier 2 라이트값 `#424245` 그대로 쓰면 대비 2.4:1 — WCAG AA FAIL. 증상: "진블루 박스 안에 뭐가 써있긴 한데 안 읽힘". 규칙: 다크 컨테이너(`.dark`·`.hot`·`.key`·`.now`·Oxford Blue) 내부는 **Tier 2 자동 역매핑 `#d1d1d6`**. 3 CSS 변수 분리 필수(하나로 묶으면 장식까지 흰색 되어 위계 붕괴).
 - **inline `style="color:..."` 선언 (치명):** inline specificity 1000이 다크 컨테이너 역매핑(0,0,1,0~0,0,2,0)을 **무조건 무력화**. `<div class="xs" style="color:#424245">`를 `.think.dark` 자식으로 넣으면 역매핑 CSS 무시되고 진블루 위 진한회색 그대로 출력. 규칙: **inline style 색상 선언 0건**. 색상은 `var(--label-*)` 경유만. 실제 사례: KISAS_PLANNING_V2.html 2026-04-21 라인 488.
 - **`--muted` 단일 변수 설계 (설계 실패):** Tier 1/2/3를 한 변수에 몰면 다크 역매핑이 한 변수에만 걸려 위계 3단이 2단(또는 1단)으로 붕괴. 예: `--muted:#fff`로 다크 역매핑 → 정보성·캡션·장식 전부 흰색 = 위계 사라짐. 규칙: `--label-info`·`--label-caption`·`--label-deco` 3개로 분리해 각각 독립 역매핑.
+- **`repeat(N, 1fr)` 단독 (치명):** grid item 기본 `min-width:auto`라 콘텐츠가 칸 폭을 밀어냄. `+22.8%` 같은 긴 텍스트가 4칼럼 박스 밖으로 삐져나옴. 규칙: `repeat(N, minmax(0, 1fr))` 필수 + `.box { min-width:0; overflow:hidden }`. 실제 사례: KISAS_Play_Manifesto.html 2026-04-23 s13.
+- **인라인 `style="font-size:clamp(...)"` (치명):** 인라인 specificity 1000이 @media 오버라이드를 무력화. 모바일 폰트 축소 미적용 → 글자밀림. 규칙: 전부 클래스·CSS 변수 경유. 실제 사례: s17 closing-final → 인라인 제거 후 `.closing-final` 클래스 + @media 36px 정상 작동.
+- **히어로 `<br>` 강제 줄바꿈:** "Learn이 아니라,`<br>`Play다." 같은 강제 개행은 폭이 바뀔 때 깨지는 위치에 박혀 모바일에서 극단 2+5자 낙하. 규칙: 자연 wrap + `word-break:keep-all` 의존. 의도적 2줄 연출은 **최단 뷰포트에서도 1줄 보장** 조건에서만.
+- **clamp 하한 모바일 역산 누락:** 데스크톱 기준으로 `clamp(26px, 5.5vw, 84px)` 쓰면 375px에서 `5.5vw × 375 = 20.6px`로 수렴 → 히어로가 본문 크기. 규칙: 히어로 하한 ≥40px·섹션 타이틀 ≥26px. 375px 뷰포트에서 먼저 디자인(mobile-first) → 데스크톱으로 확장.
+- **데스크톱 먼저 설계하는 관성:** PC 완벽 → 모바일만 나중에 확인 = 수정 루프 3~5회. 근본 처방: mobile-first. 375px 뷰포트에서 히어로·그리드·폰트 선설계 → 미디어쿼리로 데스크톱 확장.
